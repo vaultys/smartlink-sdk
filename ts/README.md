@@ -26,6 +26,10 @@
   - [getMemberships](#getmemberships)
   - [postMemberships](#postmemberships)
   - [getMembershipsSearch](#getmembershipssearch)
+- [Schemas](#schemas)
+  - [User](#user)
+  - [Folder](#folder)
+  - [App](#app)
 
 ## Introduction
 
@@ -77,12 +81,12 @@ fetch();
 
 ### getAppByClientId
 
-Fetches an app by its client ID.
+Fetches an app by its unique ID.
 
 ```typescript
 await getAppByClientId({
   params: {
-    clientId: "your_client_id",
+    clientId: "app_id",
   },
 });
 ```
@@ -95,14 +99,13 @@ await getAppByClientId({
 
 #### Response
 
-| Field       | type   | description     |
-| ----------- | ------ | --------------- |
-| id          | string | App ID          |
-| title       | string | App title       |
-| url         | string | App URL         |
-| iconUrl     | string | App icon URL    |
-| description | string | App description |
-| slug        | string | App slug        |
+> 200: The [App](#app)
+
+> 401: Not authorized
+
+> 404: App not found
+
+> 500: Internal server error
 
 ### postApp
 
@@ -132,14 +135,11 @@ await postApp({
 
 #### Response
 
-| Field       | type   | description     |
-| ----------- | ------ | --------------- |
-| id          | string | App ID          |
-| title       | string | App title       |
-| url         | string | App URL         |
-| iconUrl     | string | App icon URL    |
-| description | string | App description |
-| slug        | string | App slug        |
+> 200: The added [App](#app)
+
+> 401: Not authorized
+
+> 500: Internal server error
 
 ### putAppByClientId
 
@@ -178,14 +178,13 @@ await putAppByClientId({
 
 #### Response
 
-| Field       | type   | description     |
-| ----------- | ------ | --------------- |
-| id          | string | App ID          |
-| title       | string | App title       |
-| url         | string | App URL         |
-| iconUrl     | string | App icon URL    |
-| description | string | App description |
-| slug        | string | App slug        |
+> 200: The updated [App](#app)
+
+> 401: Not authorized
+
+> 404: App not found
+
+> 500: Internal server error
 
 ### deleteAppByClientId
 
@@ -207,9 +206,13 @@ await deleteAppByClientId({
 
 #### Response
 
-| Field | type   | description |
-| ----- | ------ | ----------- |
-| id    | string | App ID      |
+> 200: The deleted [App](#app)
+
+> 401: Not authorized
+
+> 404: App not found
+
+> 500: Internal server error
 
 ### getApps
 
@@ -262,9 +265,11 @@ await postApps({
 
 #### Response
 
-| Field | type  | description  |
-| ----- | ----- | ------------ |
-| apps  | array | List of apps |
+> 200: Array of created [Apps](#app)
+
+> 401: Not authorized
+
+> 500: Internal server error
 
 ### getEvents
 
@@ -286,9 +291,11 @@ const events = await getEvents({
 
 #### Response
 
-| Field  | type  | description    |
-| ------ | ----- | -------------- |
-| events | array | List of events |
+> 200: Array of [events](#event)
+
+> 401: Not authorized
+
+> 500: Internal server error
 
 ### getFolderById
 
@@ -310,11 +317,13 @@ await getFolderById({
 
 #### Response
 
-| Field       | type   | description        |
-| ----------- | ------ | ------------------ |
-| id          | string | Folder ID          |
-| name        | string | Folder name        |
-| description | string | Folder description |
+> 200: The [Folder](#folder)
+
+> 401: Not authorized
+
+> 404: Folder not found
+
+> 500: Internal server error
 
 ### deleteFolderById
 
@@ -336,9 +345,13 @@ await deleteFolderById({
 
 #### Response
 
-| Field | type   | description |
-| ----- | ------ | ----------- |
-| id    | string | Folder ID   |
+> 200: The deleted [Folder](#folder)
+
+> 401: Not authorized
+
+> 404: Folder not found
+
+> 500: Internal server error
 
 ### postFolder
 
@@ -362,11 +375,11 @@ await postFolder({
 
 #### Response
 
-| Field       | type   | description        |
-| ----------- | ------ | ------------------ |
-| id          | string | Folder ID          |
-| name        | string | Folder name        |
-| description | string | Folder description |
+> 200: The created [Folder](#folder)
+
+> 401: Not authorized
+
+> 500: Internal server error
 
 ### getFolders
 
@@ -378,9 +391,11 @@ const folders = await getFolders();
 
 #### Response
 
-| Field   | type  | description     |
-| ------- | ----- | --------------- |
-| folders | array | List of folders |
+> 200: Array of [Folder](#folder)
+
+> 401: Not authorized
+
+> 500: Internal server error
 
 ### postMembershipByIdDeactivate
 
@@ -402,9 +417,13 @@ await postMembershipByIdDeactivate({
 
 #### Response
 
-| Field | type   | description   |
-| ----- | ------ | ------------- |
-| id    | string | Membership ID |
+> 200: The updated [User](#user)
+
+> 401: Not authorized
+
+> 404: User not found
+
+> 500: Internal server error
 
 ### getMembershipById
 
@@ -426,11 +445,13 @@ await getMembershipById({
 
 #### Response
 
-| Field  | type   | description       |
-| ------ | ------ | ----------------- |
-| id     | string | Membership ID     |
-| name   | string | Membership name   |
-| status | string | Membership status |
+> 200: The [User](#user)
+
+> 401: Not authorized
+
+> 404: User not found
+
+> 500: Internal server error
 
 ### putMembershipById
 
@@ -463,11 +484,13 @@ await putMembershipById({
 
 #### Response
 
-| Field  | type   | description       |
-| ------ | ------ | ----------------- |
-| id     | string | Membership ID     |
-| name   | string | Membership name   |
-| status | string | Membership status |
+> 200: The updated [User](#user)
+
+> 401: Not authorized
+
+> 404: User not found
+
+> 500: Internal server error
 
 ### deleteMembershipById
 
@@ -489,9 +512,13 @@ await deleteMembershipById({
 
 #### Response
 
-| Field | type   | description   |
-| ----- | ------ | ------------- |
-| id    | string | Membership ID |
+> 200: The deleted [User](#user)
+
+> 401: Not authorized
+
+> 404: User not found
+
+> 500: Internal server error
 
 ### postMembership
 
@@ -515,11 +542,11 @@ await postMembership({
 
 #### Response
 
-| Field  | type   | description       |
-| ------ | ------ | ----------------- |
-| id     | string | Membership ID     |
-| name   | string | Membership name   |
-| status | string | Membership status |
+> 200: The created [User](#user)
+
+> 401: Not authorized
+
+> 500: Internal server error
 
 ### getMemberships
 
@@ -531,9 +558,11 @@ const memberships = await getMemberships();
 
 #### Response
 
-| Field       | type  | description         |
-| ----------- | ----- | ------------------- |
-| memberships | array | List of memberships |
+> 200: Array of [User](#user)
+
+> 401: Not authorized
+
+> 500: Internal server error
 
 ### postMemberships
 
@@ -563,9 +592,11 @@ await postMemberships({
 
 #### Response
 
-| Field       | type  | description         |
-| ----------- | ----- | ------------------- |
-| memberships | array | List of memberships |
+> 200: Array of created [Users](#user)
+
+> 401: Not authorized
+
+> 500: Internal server error
 
 ### getMembershipsSearch
 
@@ -587,6 +618,67 @@ const memberships = await getMembershipsSearch({
 
 #### Response
 
-| Field       | type  | description         |
-| ----------- | ----- | ------------------- |
-| memberships | array | List of memberships |
+> 200: Array of [User](#user)
+
+> 401: Not authorized
+
+> 500: Internal server error
+
+## Schemas
+
+### User
+
+| Field          | type    | description                          |
+| -------------- | ------- | ------------------------------------ |
+| id             | integer | Membership unique ID                 |
+| role           | string  | Membership role (OWNER, USER, ADMIN) |
+| organizationId | integer | Unique ID of the organization        |
+| userId         | integer | Unique ID of the user                |
+| createdAt      | Date    | Creation date                        |
+| updatedAt      | Date    | Last update date                     |
+| status         | string  | Membership status (ACTIVE, INACTIVE) |
+| language       | string  | Preferred language (ex 'en')         |
+| name           | string  | User's name                          |
+| firstName      | string  | User's first name                    |
+| email          | string  | User's email address                 |
+| phone          | string  | User's phone number                  |
+
+### Folder
+
+| Field          | type    | description                           |
+| -------------- | ------- | ------------------------------------- |
+| id             | integer | Folder unique ID                      |
+| name           | string  | Folder name                           |
+| forAllUsers    | boolean | Indicates if folder is for all users  |
+| organizationId | integer | Unique ID of the organization         |
+| parentId       | integer | Unique ID of the parent folder        |
+| path           | string  | Full path of the folder (/NewYork/HR) |
+
+### App
+
+| Field          | type    | description                       |
+| -------------- | ------- | --------------------------------- |
+| clientId       | string  | App client ID                     |
+| type           | string  | App type (SMARTLINK, SAML2)       |
+| title          | string  | App title                         |
+| url            | string  | App URL                           |
+| iconUrl        | string  | App icon URL                      |
+| ping           | integer | How many times the app was opened |
+| slug           | string  | Unique slug for the app           |
+| description    | string  | App description                   |
+| organizationId | integer | Unique ID of the organization     |
+
+### Event
+
+| Field          | type     | description                              |
+| -------------- | -------- | ---------------------------------------- |
+| id             | integer  | Log event unique ID                      |
+| createdAt      | DateTime | Creation date of the log event           |
+| message        | string   | Log event message                        |
+| type           | integer  | Log event type type                      |
+| organizationId | integer  | Unique ID of the organization (nullable) |
+| membershipId   | integer  | Unique ID of the membership (nullable)   |
+| folderId       | integer  | Unique ID of the folder (nullable)       |
+| deviceId       | integer  | Unique ID of the device (nullable)       |
+| userId         | integer  | Unique ID of the user (nullable)         |
+| appClientId    | string   | Unique client ID of the app (nullable)   |
