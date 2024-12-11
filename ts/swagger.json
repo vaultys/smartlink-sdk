@@ -1,0 +1,1160 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SmartLink API",
+    "version": "1.0"
+  },
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Manage users of your organization"
+    },
+    {
+      "name": "User",
+      "description": "Manage a specific user"
+    },
+    {
+      "name": "Folders",
+      "description": "Manage folders of your organization"
+    },
+    {
+      "name": "Folder",
+      "description": "Manage a specific folder"
+    },
+    {
+      "name": "Apps",
+      "description": "Manage apps of your organization"
+    },
+    {
+      "name": "App",
+      "description": "Manage a specific app"
+    },
+    {
+      "name": "Events",
+      "description": "Manage events of your organization"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "App": {
+        "properties": {
+          "clientId": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "iconUrl": {
+            "type": "string"
+          },
+          "organizationId": {
+            "type": "number"
+          },
+          "ping": {
+            "type": "number"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "enum": ["CUSTOM_SSO", "OPENID", "SAML", "SMARTLINK"],
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Folder": {
+        "properties": {
+          "forAllUsers": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "organizationId": {
+            "type": "number"
+          },
+          "parentId": {
+            "type": "number"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "LogEvent": {
+        "properties": {
+          "appClientId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "deviceId": {
+            "type": "number"
+          },
+          "folderId": {
+            "type": "number"
+          },
+          "id": {
+            "type": "number"
+          },
+          "membershipId": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "organizationId": {
+            "type": "number"
+          },
+          "type": {
+            "type": "number"
+          },
+          "userId": {
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "Membership": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          },
+          "language": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "organizationId": {
+            "type": "number"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "role": {
+            "enum": ["ADMIN", "OWNER", "USER"],
+            "type": "string"
+          },
+          "status": {
+            "enum": ["ACTIVE", "INACTIVE"],
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "userId": {
+            "type": "number"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "security": [],
+  "paths": {
+    "/app/{clientId}": {
+      "get": {
+        "summary": "Get an app by client ID",
+        "description": "Fetches an app by its client ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "clientId",
+            "required": true
+          }
+        ],
+        "tags": ["App"],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved app.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/App"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "404": {
+            "description": "App not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an app by client ID",
+        "description": "Updates an app by its client ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "clientId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The client ID of the app"
+          }
+        ],
+        "tags": ["App"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "required": false
+                  },
+                  "url": {
+                    "type": "string",
+                    "required": false
+                  },
+                  "iconUrl": {
+                    "type": "string",
+                    "required": false
+                  },
+                  "slug": {
+                    "type": "string",
+                    "required": false
+                  },
+                  "description": {
+                    "type": "string",
+                    "required": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated app.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/App"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "404": {
+            "description": "App not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an app by client ID",
+        "description": "Deletes an app by its client ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "clientId",
+            "required": true
+          }
+        ],
+        "tags": ["App"],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted app.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/App"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "404": {
+            "description": "App not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/app": {
+      "post": {
+        "summary": "Create a new app",
+        "description": "Create a new app for your organization",
+        "tags": ["App"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "The title of the app",
+                    "example": "My App"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "The URL of the app",
+                    "example": "https://example.com"
+                  },
+                  "iconUrl": {
+                    "type": "string",
+                    "description": "The icon URL of the app",
+                    "example": "https://example.com/icon.png"
+                  },
+                  "slug": {
+                    "type": "string",
+                    "description": "Optional slug for the app",
+                    "example": "my-app"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "The description of the app",
+                    "example": "This is my app"
+                  }
+                },
+                "required": ["title"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The created app",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/App"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/apps": {
+      "get": {
+        "summary": "Get all apps",
+        "description": "Get all apps of your organization",
+        "tags": ["Apps"],
+        "responses": {
+          "200": {
+            "description": "An array of apps",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/App"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "post": {
+        "summary": "Create multiple apps",
+        "description": "Create multiple apps for your organization",
+        "tags": ["Apps"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "apps": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "description": "The title of the app",
+                          "example": "My App"
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "The URL of the app",
+                          "example": "https://example.com"
+                        },
+                        "iconUrl": {
+                          "type": "string",
+                          "description": "The icon URL of the app",
+                          "example": "https://example.com/icon.png"
+                        },
+                        "slug": {
+                          "type": "string",
+                          "description": "Optional slug for the app",
+                          "example": "my-app"
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "The description of the app",
+                          "example": "This is my app"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "An array of created apps",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/App"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/events": {
+      "get": {
+        "summary": "Get log events",
+        "description": "Retrieve log events with various filters",
+        "tags": ["Events"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "fromDate",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Start date for filtering events (timestamp)"
+          },
+          {
+            "in": "query",
+            "name": "toDate",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "End date for filtering events (timestamp)"
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Type of log event (APP_OPEN = 0, SMARTLINK_CONNECT = 1, SMARTLINK_CONNECT_FAIL = 2, SMARTLINK_CONNECT_DENIED = 3, SMARTLINK_EXTENSION_CONNECT = 4, SMARTLINK_EXTENSION_CONNECT_FAIL = 5, SMARTLINK_EXTENSION_CONNECT_DENIED = 6, POST_PASSWORD = 7, FORM_BLOCKED = 8)"
+          },
+          {
+            "in": "query",
+            "name": "membershipId",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by membership ID"
+          },
+          {
+            "in": "query",
+            "name": "folderId",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by folder ID"
+          },
+          {
+            "in": "query",
+            "name": "userId",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by user ID"
+          },
+          {
+            "in": "query",
+            "name": "deviceId",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by device ID"
+          },
+          {
+            "in": "query",
+            "name": "appClientId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by app client ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of log events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LogEvent"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/folder/{id}": {
+      "get": {
+        "summary": "Get a folder by ID",
+        "description": "Fetches a folder by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "tags": ["Folder"],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved folder.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Folder"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Folder not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a folder by ID",
+        "description": "Deletes a folder resource identified by the given ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the folder to delete"
+          }
+        ],
+        "tags": ["Folder"],
+        "responses": {
+          "200": {
+            "description": "Folder successfully deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Folder"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Folder not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/folder": {
+      "post": {
+        "summary": "Create a new folder",
+        "description": "Create a new folder within your organization",
+        "tags": ["Folder"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "parentId": {
+                    "type": "number",
+                    "description": "ID of the parent folder"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The created folder",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Folder"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/folders": {
+      "get": {
+        "summary": "Get all folders",
+        "description": "Get all folders of your organization",
+        "tags": ["Folders"],
+        "responses": {
+          "200": {
+            "description": "An array of folders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Folder"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/membership/{id}/deactivate": {
+      "post": {
+        "summary": "Deactivate a membership by ID",
+        "description": "Updates a membership's status to \"INACTIVE\" by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the membership to deactivate"
+          }
+        ],
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Successfully deactivated membership.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membership"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "404": {
+            "description": "Membership not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/membership/{id}": {
+      "get": {
+        "summary": "Get a membership by ID",
+        "description": "Fetches a membership by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved membership.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membership"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "404": {
+            "description": "Membership not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a membership by ID",
+        "description": "Updates a membership by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "tags": ["User"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "required": false
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "required": false
+                  },
+                  "phone": {
+                    "type": "string",
+                    "required": false
+                  },
+                  "email": {
+                    "type": "string",
+                    "required": false
+                  },
+                  "role": {
+                    "type": "string",
+                    "required": false
+                  },
+                  "language": {
+                    "type": "string",
+                    "required": false
+                  },
+                  "status": {
+                    "type": "string",
+                    "required": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated membership.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membership"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "404": {
+            "description": "Membership not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a membership by ID",
+        "description": "Deletes a membership resource identified by the given ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the membership to delete"
+          }
+        ],
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Membership successfully deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membership"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "404": {
+            "description": "Membership not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/membership": {
+      "post": {
+        "summary": "Create a new membership",
+        "description": "Create a new membership for your organization",
+        "tags": ["User"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "sendMail": {
+                    "type": "boolean",
+                    "description": "Send an email to invite the user to register"
+                  },
+                  "sender": {
+                    "type": "object",
+                    "properties": {
+                      "firstName": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "isAdmin": {
+                    "type": "boolean",
+                    "description": "Set the membership as admin",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The created membership",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membership"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/memberships": {
+      "get": {
+        "summary": "Get all memberships",
+        "description": "Get all memberships of your organization",
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "An array of memberships",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Membership"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "post": {
+        "summary": "Create multiple memberships",
+        "description": "Create multiple memberships for your organization",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "memberships": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "phone": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "sendMail": {
+                          "type": "boolean",
+                          "description": "Send an email to invite the user to register"
+                        },
+                        "sender": {
+                          "type": "object",
+                          "properties": {
+                            "firstName": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "isAdmin": {
+                          "type": "boolean",
+                          "description": "Set the membership as admin",
+                          "default": false
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The created memberships",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Membership"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/memberships/search": {
+      "get": {
+        "summary": "Search memberships",
+        "description": "Search memberships with various filters",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of items per page (default is 10)"
+          },
+          {
+            "in": "query",
+            "name": "roles",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of roles to filter by (roles are OWNER, ADMIN, USER)"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search term in name, first name, email, or phone"
+          },
+          {
+            "in": "query",
+            "name": "statusFilter",
+            "schema": {
+              "type": "string",
+              "enum": ["all", "registered", "unregistered"]
+            },
+            "description": "Filter by registration status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with memberships (corresponding to the page) and total count corresponding to the search",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "memberships": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Membership"
+                      }
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Total number of memberships"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "ts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "openapi-ts": "openapi-ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@hey-api/openapi-ts": "^0.59.1",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@hey-api/client-fetch": "^0.5.2"
+  }
+}
