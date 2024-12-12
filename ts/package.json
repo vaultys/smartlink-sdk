@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "openapi-ts": "openapi-ts"
+    "openapi-ts": "sed -i 's|/api/workflow||g' swagger.json && openapi-ts"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +12,10 @@
   "description": "",
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.59.1",
+    "@types/jest": "^29.5.14",
+    "dotenv": "^16.4.7",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
     "typescript": "^5.7.2"
   },
   "dependencies": {

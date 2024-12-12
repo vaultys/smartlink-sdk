@@ -60,7 +60,12 @@
             "type": "string"
           },
           "type": {
-            "enum": ["CUSTOM_SSO", "OPENID", "SAML", "SMARTLINK"],
+            "enum": [
+              "CUSTOM_SSO",
+              "OPENID",
+              "SAML",
+              "SMARTLINK"
+            ],
             "type": "string"
           },
           "url": {
@@ -156,11 +161,18 @@
             "type": "string"
           },
           "role": {
-            "enum": ["ADMIN", "OWNER", "USER"],
+            "enum": [
+              "ADMIN",
+              "OWNER",
+              "USER"
+            ],
             "type": "string"
           },
           "status": {
-            "enum": ["ACTIVE", "INACTIVE"],
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
             "type": "string"
           },
           "updatedAt": {
@@ -188,7 +200,9 @@
             "required": true
           }
         ],
-        "tags": ["App"],
+        "tags": [
+          "App"
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved app.",
@@ -225,7 +239,9 @@
             "description": "The client ID of the app"
           }
         ],
-        "tags": ["App"],
+        "tags": [
+          "App"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -290,7 +306,9 @@
             "required": true
           }
         ],
-        "tags": ["App"],
+        "tags": [
+          "App"
+        ],
         "responses": {
           "200": {
             "description": "Successfully deleted app.",
@@ -318,7 +336,9 @@
       "post": {
         "summary": "Create a new app",
         "description": "Create a new app for your organization",
-        "tags": ["App"],
+        "tags": [
+          "App"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -352,7 +372,9 @@
                     "example": "This is my app"
                   }
                 },
-                "required": ["title"]
+                "required": [
+                  "title"
+                ]
               }
             }
           }
@@ -381,7 +403,9 @@
       "get": {
         "summary": "Get all apps",
         "description": "Get all apps of your organization",
-        "tags": ["Apps"],
+        "tags": [
+          "Apps"
+        ],
         "responses": {
           "200": {
             "description": "An array of apps",
@@ -407,7 +431,9 @@
       "post": {
         "summary": "Create multiple apps",
         "description": "Create multiple apps for your organization",
-        "tags": ["Apps"],
+        "tags": [
+          "Apps"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -480,7 +506,9 @@
       "get": {
         "summary": "Get log events",
         "description": "Retrieve log events with various filters",
-        "tags": ["Events"],
+        "tags": [
+          "Events"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -504,7 +532,7 @@
             "in": "query",
             "name": "type",
             "schema": {
-              "type": "string"
+              "type": "integer"
             },
             "description": "Type of log event (APP_OPEN = 0, SMARTLINK_CONNECT = 1, SMARTLINK_CONNECT_FAIL = 2, SMARTLINK_CONNECT_DENIED = 3, SMARTLINK_EXTENSION_CONNECT = 4, SMARTLINK_EXTENSION_CONNECT_FAIL = 5, SMARTLINK_EXTENSION_CONNECT_DENIED = 6, POST_PASSWORD = 7, FORM_BLOCKED = 8)"
           },
@@ -583,7 +611,9 @@
             "required": true
           }
         ],
-        "tags": ["Folder"],
+        "tags": [
+          "Folder"
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved folder.",
@@ -615,12 +645,14 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             },
             "description": "The ID of the folder to delete"
           }
         ],
-        "tags": ["Folder"],
+        "tags": [
+          "Folder"
+        ],
         "responses": {
           "200": {
             "description": "Folder successfully deleted",
@@ -648,7 +680,9 @@
       "post": {
         "summary": "Create a new folder",
         "description": "Create a new folder within your organization",
-        "tags": ["Folder"],
+        "tags": [
+          "Folder"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -692,7 +726,9 @@
       "get": {
         "summary": "Get all folders",
         "description": "Get all folders of your organization",
-        "tags": ["Folders"],
+        "tags": [
+          "Folders"
+        ],
         "responses": {
           "200": {
             "description": "An array of folders",
@@ -731,7 +767,9 @@
             "description": "The ID of the membership to deactivate"
           }
         ],
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "responses": {
           "200": {
             "description": "Successfully deactivated membership.",
@@ -766,7 +804,9 @@
             "required": true
           }
         ],
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved membership.",
@@ -799,7 +839,9 @@
             "required": true
           }
         ],
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -871,12 +913,14 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             },
             "description": "The ID of the membership to delete"
           }
         ],
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "responses": {
           "200": {
             "description": "Membership successfully deleted",
@@ -904,7 +948,9 @@
       "post": {
         "summary": "Create a new membership",
         "description": "Create a new membership for your organization",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -973,7 +1019,9 @@
       "get": {
         "summary": "Get all memberships",
         "description": "Get all memberships of your organization",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "responses": {
           "200": {
             "description": "An array of memberships",
@@ -999,7 +1047,9 @@
       "post": {
         "summary": "Create multiple memberships",
         "description": "Create multiple memberships for your organization",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1079,7 +1129,9 @@
       "get": {
         "summary": "Search memberships",
         "description": "Search memberships with various filters",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -1119,7 +1171,11 @@
             "name": "statusFilter",
             "schema": {
               "type": "string",
-              "enum": ["all", "registered", "unregistered"]
+              "enum": [
+                "all",
+                "registered",
+                "unregistered"
+              ]
             },
             "description": "Filter by registration status"
           }

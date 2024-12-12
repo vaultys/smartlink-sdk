@@ -188,7 +188,7 @@ export type GetEventsData = {
         /**
          * Type of log event (APP_OPEN = 0, SMARTLINK_CONNECT = 1, SMARTLINK_CONNECT_FAIL = 2, SMARTLINK_CONNECT_DENIED = 3, SMARTLINK_EXTENSION_CONNECT = 4, SMARTLINK_EXTENSION_CONNECT_FAIL = 5, SMARTLINK_EXTENSION_CONNECT_DENIED = 6, POST_PASSWORD = 7, FORM_BLOCKED = 8)
          */
-        type?: string;
+        type?: number;
         /**
          * Filter by user ID
          */
@@ -215,7 +215,7 @@ export type DeleteFolderByIdData = {
         /**
          * The ID of the folder to delete
          */
-        id: string;
+        id: number;
     };
 };
 
@@ -288,7 +288,7 @@ export type DeleteMembershipByIdData = {
         /**
          * The ID of the membership to delete
          */
-        id: string;
+        id: number;
     };
 };
 
