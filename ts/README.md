@@ -85,7 +85,7 @@ Fetches an app by its unique ID.
 
 ```typescript
 await getAppByClientId({
-  params: {
+  path: {
     clientId: "app_id",
   },
 });
@@ -99,13 +99,13 @@ await getAppByClientId({
 
 #### Response
 
-> 200: The [App](#app)
+> 200: { data: The [App](#app) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 404: App not found
+> 404: { error: "App not found" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### postApp
 
@@ -135,11 +135,11 @@ await postApp({
 
 #### Response
 
-> 200: The added [App](#app)
+> 200: { data: The added [App](#app) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### putAppByClientId
 
@@ -147,7 +147,7 @@ Updates an app by its client ID.
 
 ```typescript
 await putAppByClientId({
-  params: {
+  path: {
     clientId: "your_client_id",
   },
   body: {
@@ -178,13 +178,13 @@ await putAppByClientId({
 
 #### Response
 
-> 200: The updated [App](#app)
+> 200: { data: The updated [App](#app) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 404: App not found
+> 404: { error: "App not found" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### deleteAppByClientId
 
@@ -192,7 +192,7 @@ Deletes an app by its client ID.
 
 ```typescript
 await deleteAppByClientId({
-  params: {
+  path: {
     clientId: "your_client_id",
   },
 });
@@ -206,13 +206,13 @@ await deleteAppByClientId({
 
 #### Response
 
-> 200: The deleted [App](#app)
+> 200: { data: The deleted [App](#app) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 404: App not found
+> 404: { error: "App not found" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### getApps
 
@@ -224,9 +224,11 @@ const apps = await getApps();
 
 #### Response
 
-| Field | type  | description  |
-| ----- | ----- | ------------ |
-| apps  | array | List of apps |
+> 200: { data: Array of created [Apps](#app) }
+
+> 401: { error: "Not authorized" }
+
+> 500: { error: "Internal server error" }
 
 ### postApps
 
@@ -255,6 +257,8 @@ await postApps({
 
 #### Body
 
+Array of:
+
 | Parameters  | type   | required | default |
 | ----------- | ------ | -------- | ------- |
 | title       | string | true     |         |
@@ -265,11 +269,11 @@ await postApps({
 
 #### Response
 
-> 200: Array of created [Apps](#app)
+> 200: { data: Array of created [Apps](#app) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### getEvents
 
@@ -277,25 +281,53 @@ Retrieve log events with various filters.
 
 ```typescript
 const events = await getEvents({
-  params: {
-    filter: "your_filter",
+  query: {
+    fromDate: 1733995830,
+    toDate: 1733995840,
+    type: 0,
+    membershipId: 1,
+    folderId: 1,
+    userId: 1,
+    deviceId: 1,
+    appClientId: "1",
   },
 });
 ```
 
-#### Parameters
+#### Query
 
-| Parameters | type   | required | default |
-| ---------- | ------ | -------- | ------- |
-| filter     | string | false    | null    |
+| Parameters   | type                      | required | default |
+| ------------ | ------------------------- | -------- | ------- |
+| fromDate     | integer                   | false    | null    |
+| toDate       | integer                   | false    | null    |
+| type         | integer (see Events type) | false    | null    |
+| membershipId | integer                   | false    | null    |
+| folderId     | integer                   | false    | null    |
+| userId       | integer                   | false    | null    |
+| deviceId     | integer                   | false    | null    |
+| appClientId  | string                    | false    | null    |
+
+### Events type
+
+| type | description                                         |
+| ---- | --------------------------------------------------- |
+| 0    | An app was opened                                   |
+| 1    | Someone is successfully connected on SmartLink      |
+| 2    | A connection has failed on SmartLink                |
+| 3    | A connection was denied on SmartLink                |
+| 4    | Someone is successfully connected from an extension |
+| 5    | A connection from an extension has failed           |
+| 6    | A connection from an extension was denied           |
+| 7    | A new password was set                              |
+| 8    | A login from was blocked by anti-phishing feature   |
 
 #### Response
 
-> 200: Array of [events](#event)
+> 200: { data: Array of [events](#event) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### getFolderById
 
@@ -303,7 +335,7 @@ Fetches a folder by its ID.
 
 ```typescript
 await getFolderById({
-  params: {
+  path: {
     id: "your_folder_id",
   },
 });
@@ -317,13 +349,13 @@ await getFolderById({
 
 #### Response
 
-> 200: The [Folder](#folder)
+> 200: { data: The [Folder](#folder) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 404: Folder not found
+> 404: { error: "Folder not found" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### deleteFolderById
 
@@ -331,7 +363,7 @@ Deletes a folder resource identified by the given ID.
 
 ```typescript
 await deleteFolderById({
-  params: {
+  path: {
     id: "your_folder_id",
   },
 });
@@ -345,13 +377,13 @@ await deleteFolderById({
 
 #### Response
 
-> 200: The deleted [Folder](#folder)
+> 200: { data: The deleted [Folder](#folder) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 404: Folder not found
+> 404: { error: "Folder not found" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### postFolder
 
@@ -361,25 +393,25 @@ Creates a new folder within your organization.
 await postFolder({
   body: {
     name: "Folder name",
-    description: "Folder description",
+    parentId: 2,
   },
 });
 ```
 
 #### Body
 
-| Parameters  | type   | required | default |
-| ----------- | ------ | -------- | ------- |
-| name        | string | true     |         |
-| description | string | false    | null    |
+| Parameters | type    | required | default |
+| ---------- | ------- | -------- | ------- |
+| name       | string  | true     |         |
+| parentId   | integer | false    | null    |
 
 #### Response
 
-> 200: The created [Folder](#folder)
+> 200: { data: The created [Folder](#folder) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### getFolders
 
@@ -391,11 +423,11 @@ const folders = await getFolders();
 
 #### Response
 
-> 200: Array of [Folder](#folder)
+> 200: { data: Array of [Folder](#folder) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### postMembershipByIdDeactivate
 
@@ -403,7 +435,7 @@ Updates a membership's status to "INACTIVE" by its ID.
 
 ```typescript
 await postMembershipByIdDeactivate({
-  params: {
+  path: {
     id: "your_membership_id",
   },
 });
@@ -417,13 +449,13 @@ await postMembershipByIdDeactivate({
 
 #### Response
 
-> 200: The updated [User](#user)
+> 200: { data: The updated [User](#user) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 404: User not found
+> 404: { error: "User not found" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### getMembershipById
 
@@ -431,7 +463,7 @@ Fetches a membership by its ID.
 
 ```typescript
 await getMembershipById({
-  params: {
+  path: {
     id: "your_membership_id",
   },
 });
@@ -445,13 +477,13 @@ await getMembershipById({
 
 #### Response
 
-> 200: The [User](#user)
+> 200: { data: The [User](#user) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 404: User not found
+> 404: { error: "User not found" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### putMembershipById
 
@@ -459,12 +491,17 @@ Updates a membership by its ID.
 
 ```typescript
 await putMembershipById({
-  params: {
-    id: "your_membership_id",
+  path: {
+    id: <your_membership_id>,
   },
   body: {
-    name: "Updated name",
-    status: "Updated status",
+    firstName: "John",
+    name: "Doe",
+    phone: "+336...",
+    email: "john.doe@fake.com",
+    role: "ADMIN" | "USER",
+    status: "ACTIVE" | "INACTIVE",
+    language: "fr",
   },
 });
 ```
@@ -477,20 +514,25 @@ await putMembershipById({
 
 #### Body
 
-| Parameters | type   | required | default |
-| ---------- | ------ | -------- | ------- |
-| name       | string | true     |         |
-| status     | string | true     |         |
+| Parameters | type                                  | required | default           |
+| ---------- | ------------------------------------- | -------- | ----------------- |
+| firstName  | string                                | false    | keep actual value |
+| name       | string                                | false    | keep actual value |
+| phone      | string                                | false    | keep actual value |
+| email      | string                                | false    | keep actual value |
+| role       | "ADMIN" or "USER"                     | false    | keep actual value |
+| status     | "ACTIVE" or "INACTIVE"                | false    | keep actual value |
+| language   | string ("fr", "en", "es", "zh", "de") | false    | keep actual value |
 
 #### Response
 
-> 200: The updated [User](#user)
+> 200: { data: The updated [User](#user) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 404: User not found
+> 404: { error: "User not found" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### deleteMembershipById
 
@@ -498,27 +540,27 @@ Deletes a membership resource identified by the given ID.
 
 ```typescript
 await deleteMembershipById({
-  params: {
-    id: "your_membership_id",
+  path: {
+    id: <your_membership_id>,
   },
 });
 ```
 
 #### Parameters
 
-| Parameters | type   | required | default |
-| ---------- | ------ | -------- | ------- |
-| id         | string | true     |         |
+| Parameters | type    | required | default |
+| ---------- | ------- | -------- | ------- |
+| id         | integer | true     |         |
 
 #### Response
 
-> 200: The deleted [User](#user)
+> 200: { data: The deleted [User](#user) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 404: User not found
+> 404: { error: "User not found" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### postMembership
 
@@ -527,26 +569,40 @@ Creates a new membership for your organization.
 ```typescript
 await postMembership({
   body: {
-    name: "Membership name",
-    status: "Membership status",
+    firstName: "John",
+    name: "Doe",
+    phone: "+336...",
+    email: "john.doe@fake.com",
+    sendMail: true, // invite user by email
+    sender: {
+      // sender will be displayed in the invitation email
+      firstName: "Admin",
+      name: "istrator",
+    },
+    isAdmin: false, // administrator membership ?
   },
 });
 ```
 
 #### Body
 
-| Parameters | type   | required | default |
-| ---------- | ------ | -------- | ------- |
-| name       | string | true     |         |
-| status     | string | true     |         |
+| Parameters | type                             | required | default |
+| ---------- | -------------------------------- | -------- | ------- |
+| firstName  | string                           | true     |         |
+| name       | string                           | true     |         |
+| email      | string                           | true     |         |
+| phone      | string                           | true     | null    |
+| sendMail   | boolean                          | false    | false   |
+| sender     | {firsName: string; name: string} | false    | null    |
+| isAdmin    | boolean                          | false    | false   |
 
 #### Response
 
-> 200: The created [User](#user)
+> 200: { data: The created [User](#user) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### getMemberships
 
@@ -558,11 +614,11 @@ const memberships = await getMemberships();
 
 #### Response
 
-> 200: Array of [User](#user)
+> 200: { data: Array of [User](#user) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### postMemberships
 
@@ -572,12 +628,25 @@ Creates multiple memberships for your organization.
 await postMemberships({
   body: [
     {
-      name: "Membership name 1",
-      status: "Membership status 1",
+      firstName: "John",
+      name: "Doe",
+      phone: "+336...",
+      email: "john.doe@fake.com",
+      sendMail: true, // invite user by email
+      sender: {
+        // sender will be displayed in the invitation email
+        firstName: "Admin",
+        name: "istrator",
+      },
+      isAdmin: false, // administrator membership ?,
     },
     {
-      name: "Membership name 2",
-      status: "Membership status 2",
+      firstName: "Jane",
+      name: "Doe",
+      phone: "+336...",
+      email: "jane.doe@fake.com",
+      sendMail: false,
+      isAdmin: true, // administrator membership ?
     },
   ],
 });
@@ -585,44 +654,59 @@ await postMemberships({
 
 #### Body
 
-| Parameters | type   | required | default |
-| ---------- | ------ | -------- | ------- |
-| name       | string | true     |         |
-| status     | string | true     |         |
+Array of:
+
+| Parameters | type                             | required | default |
+| ---------- | -------------------------------- | -------- | ------- |
+| firstName  | string                           | true     |         |
+| name       | string                           | true     |         |
+| email      | string                           | true     |         |
+| phone      | string                           | true     | null    |
+| sendMail   | boolean                          | false    | false   |
+| sender     | {firsName: string; name: string} | false    | null    |
+| isAdmin    | boolean                          | false    | false   |
 
 #### Response
 
-> 200: Array of created [Users](#user)
+> 200: { data: Array of created [Users](#user) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ### getMembershipsSearch
 
-Search memberships with various filters.
+Search memberships with various filters. Responses are paginated so you need to specify the page you want.
 
 ```typescript
 const memberships = await getMembershipsSearch({
-  params: {
-    filter: "your_filter",
+  query: {
+    page: 1,
+    pageSize: 10,
+    roles: "ADMIN,USER",
+    search: "john", // search in names, firstNames, emails and phones
+    statusFilter: "all",
   },
 });
 ```
 
-#### Parameters
+#### Query
 
-| Parameters | type   | required | default |
-| ---------- | ------ | -------- | ------- |
-| filter     | string | false    | null    |
+| Parameters   | type                                           | required | default          |
+| ------------ | ---------------------------------------------- | -------- | ---------------- |
+| page         | integer                                        | true     |                  |
+| pageSize     | integer                                        | false    | 10               |
+| roles        | string (comma separated )                      | false    | null (all roles) |
+| search       | string                                         | false    | null             |
+| statusFilter | string ("all", "registered" or "unregistered") | false    | all              |
 
 #### Response
 
-> 200: Array of [User](#user)
+> 200: { data: Array of [User](#user) }
 
-> 401: Not authorized
+> 401: { error: "Not authorized" }
 
-> 500: Internal server error
+> 500: { error: "Internal server error" }
 
 ## Schemas
 
