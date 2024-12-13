@@ -135,6 +135,48 @@
       },
       "Membership": {
         "properties": {
+          "Certificates": {
+            "items": {
+              "properties": {
+                "connection": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "number"
+                },
+                "key": {
+                  "type": "string"
+                },
+                "membershipId": {
+                  "type": "number"
+                },
+                "metadata": {
+                  "type": "string"
+                },
+                "organizationId": {
+                  "type": "number"
+                },
+                "register": {
+                  "type": "boolean"
+                },
+                "registration": {
+                  "type": "string"
+                },
+                "started": {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "status": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
           "createdAt": {
             "format": "date-time",
             "type": "string"
@@ -158,6 +200,9 @@
             "type": "number"
           },
           "phone": {
+            "type": "string"
+          },
+          "registerLink": {
             "type": "string"
           },
           "role": {

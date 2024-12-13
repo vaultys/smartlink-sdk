@@ -37,6 +37,19 @@ export type LogEvent = {
 };
 
 export type Membership = {
+    Certificates?: Array<{
+        connection?: string;
+        data?: string;
+        id?: number;
+        key?: string;
+        membershipId?: number;
+        metadata?: string;
+        organizationId?: number;
+        register?: boolean;
+        registration?: string;
+        started?: string;
+        status?: number;
+    }>;
     createdAt?: string;
     email?: string;
     firstName?: string;
@@ -45,6 +58,7 @@ export type Membership = {
     name?: string;
     organizationId?: number;
     phone?: string;
+    registerLink?: string;
     role?: 'ADMIN' | 'OWNER' | 'USER';
     status?: 'ACTIVE' | 'INACTIVE';
     updatedAt?: string;

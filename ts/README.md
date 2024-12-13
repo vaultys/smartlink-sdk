@@ -668,7 +668,7 @@ Array of:
 
 #### Response
 
-> 200: { data: Array of created [Users](#user) }
+> 200: { data: {memberships: Array of created [Users](#user), count: number (total of users for this search)} }
 
 > 401: { error: "Not authorized" }
 
