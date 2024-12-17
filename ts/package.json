@@ -1,15 +1,16 @@
 {
-  "name": "ts",
+  "name": "@vaultys/smartlink-sdk",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "description": "SDK for SmartLink API and webhooks",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "openapi-ts": "sed -i 's|/api/workflow||g' swagger.json && openapi-ts"
+    "openapi-ts": "sed -i 's|/api/workflow||g' swagger.json && openapi-ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.59.1",
     "@types/jest": "^29.5.14",
@@ -18,7 +19,7 @@
     "ts-jest": "^29.2.5",
     "typescript": "^5.7.2"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@hey-api/client-fetch": "^0.5.2"
   }
 }
