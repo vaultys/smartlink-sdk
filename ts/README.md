@@ -30,6 +30,9 @@
   - [User](#user)
   - [Folder](#folder)
   - [App](#app)
+- [Webhooks](#webhooks)
+  - [Verify](#verify)
+  - [Webhooks types](#webhook-types)
 
 ## Introduction
 
@@ -766,3 +769,55 @@ const memberships = await getMembershipsSearch({
 | deviceId       | integer  | Unique ID of the device (nullable)       |
 | userId         | integer  | Unique ID of the user (nullable)         |
 | appClientId    | string   | Unique client ID of the app (nullable)   |
+
+## Webhooks
+
+### Verify
+
+```typescript
+const body = await request.json();
+if (await Webhook.verify(body, <YOUR API KEY>)) {
+  switch (body.event) {
+    case "membership.created":
+      // handle membership created webhook
+      // ...
+      break;
+
+    // ....
+  }
+} else {
+  // wrong signature or timestamp expired
+}
+```
+
+### Webhook Types
+
+The following webhook types are available:
+
+- **Membership Webhooks**
+
+  - `membership.created`: Triggered when a membership is created.
+  - `membership.deleted`: Triggered when a membership is deleted.
+  - `membership.updated`: Triggered when a membership is updated.
+  - `membership.connected`: Triggered when a membership connection is established.
+  - `membership.connected.fail`: Triggered when a membership connection fails.
+  - `membership.connected.denied`: Triggered when a membership connection is denied.
+  - `membership.extension.connected`: Triggered when a membership is connected from an extension.
+  - `membership.extension.connected.fail`: Triggered when a membership connection fails from an extension.
+  - `membership.extension.connected.denied`: Triggered when a membership connection is denied from an extension.
+
+- **Folder Webhooks**
+
+  - `folder.created`: Triggered when a folder is created.
+  - `folder.deleted`: Triggered when a folder is deleted.
+  - `folder.updated`: Triggered when a folder is updated.
+
+- **App Webhooks**
+
+  - `app.created`: Triggered when an app is created.
+  - `app.deleted`: Triggered when an app is deleted.
+  - `app.updated`: Triggered when an app is updated.
+  - `app.opened`: Triggered when an app is opened.
+
+- **Event Webhooks**
+  - `event`: Triggered when a log event occurs.
