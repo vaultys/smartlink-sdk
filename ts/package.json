@@ -7,6 +7,7 @@
     "type": "git",
     "url": "https://github.com/vaultys/smartlink-sdk.git"
   },
+  "homepage": "https://github.com/vaultys/smartlink-sdk/tree/main/ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "openapi-ts": "sed -i 's|/api/workflow||g' swagger.json && openapi-ts",
