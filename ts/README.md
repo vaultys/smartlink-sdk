@@ -41,7 +41,7 @@ The SmartLink SDK allows you to make requests to the SmartLink API. To use the S
 
 ```typescript
 import { createClient } from "@hey-api/client-fetch";
-import { getApps } from "../client";
+import { getApps } from "@vaultys/smartlink-sdk";
 
 const fetch = async () => {
   const client = createClient({
@@ -60,7 +60,7 @@ fetch();
 ### Example 2: Configure client globally
 
 ```typescript
-import { client, getApps } from "../client";
+import { client, getApps } from "@vaultys/smartlink-sdk";
 
 client.setConfig({
   baseUrl: "https://<your_smartlink_url>/api/workflow",
