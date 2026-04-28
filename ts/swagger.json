@@ -1,7 +1,8 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.0",
   "info": {
     "title": "SmartLink API",
+    "description": "# Authentication\nTo use the API you need to authenticate with a valid api key (Your apiKey is available in Workflow -> api). You must provide the api key in the header **x-api-key** of your requests.\n\n# Rate Limiting\n\nThe API implements rate limiting to ensure fair usage and system stability. Rate limits can be configured per organization.\n\n## Rate Limit Headers\n\nEvery API response includes the following headers to help you track your usage:\n\n- **X-RateLimit-Limit**: Maximum number of requests allowed in the current time window\n- **X-RateLimit-Remaining**: Number of requests remaining in the current time window\n- **X-RateLimit-Reset**: Unix timestamp (in milliseconds) when the rate limit will reset\n\n## Rate Limit Exceeded\n\nWhen you exceed the rate limit, you will receive a **429 Too Many Requests** response with the same headers indicating when you can retry.\n\n# SmartLink SDK\n\nUse our [Javascript SDK](https://www.npmjs.com/package/@vaultys/smartlink-sdk) to verify your webhooks and use the SmartLink API.\n\n```bash\nnpm i @vaultys/smartlink-sdk\n```",
     "version": "1.0"
   },
   "tags": [
@@ -32,6 +33,10 @@
     {
       "name": "Events",
       "description": "Manage events of your organization"
+    },
+    {
+      "name": "Import",
+      "description": "Import data into your organization"
     }
   ],
   "components": {
@@ -60,19 +65,25 @@
             "type": "string"
           },
           "type": {
-            "enum": [
-              "CUSTOM_SSO",
-              "OPENID",
-              "SAML",
-              "SMARTLINK"
-            ],
+            "enum": ["OPENID", "SAML", "SMARTLINK"],
             "type": "string"
           },
           "url": {
             "type": "string"
           }
         },
-        "type": "object"
+        "type": "object",
+        "example": {
+          "clientId": "app_1234567890",
+          "description": "This is a sample application.",
+          "iconUrl": "https://example.com/icon.png",
+          "organizationId": 1,
+          "ping": 200,
+          "slug": "sample-app",
+          "title": "Sample Application",
+          "type": "SMARTLINK",
+          "url": "https://example.com"
+        }
       },
       "Folder": {
         "properties": {
@@ -95,7 +106,15 @@
             "type": "string"
           }
         },
-        "type": "object"
+        "type": "object",
+        "example": {
+          "forAllUsers": false,
+          "id": 123,
+          "name": "Web",
+          "organizationId": 1,
+          "parentId": 0,
+          "path": "/Dev"
+        }
       },
       "LogEvent": {
         "properties": {
@@ -105,6 +124,10 @@
           "createdAt": {
             "format": "date-time",
             "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/JsonValue",
+            "description": "From https://github.com/sindresorhus/type-fest/\nMatches any valid JSON value."
           },
           "deviceId": {
             "type": "number"
@@ -124,59 +147,32 @@
           "organizationId": {
             "type": "number"
           },
-          "type": {
+          "shadowItAppId": {
             "type": "number"
           },
-          "userId": {
+          "type": {
             "type": "number"
           }
         },
-        "type": "object"
+        "type": "object",
+        "example": {
+          "appClientId": "app_1234567890",
+          "createdAt": "2024-06-15T12:34:56Z",
+          "data": {
+            "url": "https://example.com"
+          },
+          "deviceId": null,
+          "folderId": null,
+          "id": 987654321,
+          "membershipId": 123456789,
+          "message": "User accessed the application.",
+          "organizationId": 555555,
+          "shadowItAppId": null,
+          "type": 1
+        }
       },
       "Membership": {
         "properties": {
-          "Certificates": {
-            "items": {
-              "properties": {
-                "connection": {
-                  "type": "string"
-                },
-                "data": {
-                  "type": "string"
-                },
-                "id": {
-                  "type": "number"
-                },
-                "key": {
-                  "type": "string"
-                },
-                "membershipId": {
-                  "type": "number"
-                },
-                "metadata": {
-                  "type": "string"
-                },
-                "organizationId": {
-                  "type": "number"
-                },
-                "register": {
-                  "type": "boolean"
-                },
-                "registration": {
-                  "type": "string"
-                },
-                "started": {
-                  "format": "date-time",
-                  "type": "string"
-                },
-                "status": {
-                  "type": "number"
-                }
-              },
-              "type": "object"
-            },
-            "type": "array"
-          },
           "createdAt": {
             "format": "date-time",
             "type": "string"
@@ -206,29 +202,241 @@
             "type": "string"
           },
           "role": {
-            "enum": [
-              "ADMIN",
-              "OWNER",
-              "USER"
-            ],
+            "enum": ["ADMIN", "OWNER", "USER"],
             "type": "string"
           },
           "status": {
-            "enum": [
-              "ACTIVE",
-              "INACTIVE"
-            ],
+            "enum": ["ACTIVE", "INACTIVE"],
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "example": {
+          "createdAt": "2024-05-10T14:30:00Z",
+          "email": "user@example.com",
+          "firstName": "John",
+          "id": 123,
+          "language": "en",
+          "name": "John Doe",
+          "organizationId": 1,
+          "phone": "+1234567890",
+          "registerLink": "https://example.com/register",
+          "role": "USER",
+          "status": "ACTIVE",
+          "updatedAt": "2024-06-10T14:30:00Z"
+        }
+      },
+      "Message": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "creatorId": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          },
+          "expiration": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          },
+          "organizationId": {
+            "type": "number"
+          },
+          "recipientId": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "example": {
+          "createdAt": "2024-06-15T10:00:00Z",
+          "creatorId": 2,
+          "description": "...",
+          "expiration": "2024-06-20T10:00:00Z",
+          "id": 101,
+          "organizationId": 1,
+          "recipientId": 5,
+          "status": "PENDING",
+          "title": "Shadow IT Application Detected",
+          "type": "SHADOW_IT"
+        }
+      },
+      "Organization": {
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "maxUser": {
+            "type": "number"
+          },
+          "maxApp": {
+            "type": "number"
+          },
+          "maxDomain": {
+            "type": "number"
+          },
+          "maxFolder": {
+            "type": "number"
+          },
+          "createdAt": {
+            "format": "date-time",
             "type": "string"
           },
           "updatedAt": {
             "format": "date-time",
             "type": "string"
           },
-          "userId": {
-            "type": "number"
+          "admin": {
+            "type": "boolean"
+          },
+          "allowCreation": {
+            "type": "boolean"
+          },
+          "createOnly": {
+            "type": "boolean"
+          },
+          "licenseExpiration": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "stripeCustomerId": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "license": {
+            "enum": ["FREE", "PRO", "ENTERPRISE"],
+            "type": "string"
+          },
+          "visibility": {
+            "enum": ["PUBLIC", "PRIVATE"],
+            "type": "string"
+          },
+          "rateLimit": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "organizationId": {
+                "type": "number"
+              },
+              "limit": {
+                "type": "number"
+              },
+              "window": {
+                "type": "number"
+              },
+              "createdAt": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "updatedAt": {
+                "format": "date-time",
+                "type": "string"
+              }
+            }
+          },
+          "_count": {
+            "type": "object",
+            "properties": {
+              "Memberships": {
+                "type": "number"
+              },
+              "Apps": {
+                "type": "number"
+              },
+              "Folders": {
+                "type": "number"
+              },
+              "Domains": {
+                "type": "number"
+              },
+              "LogEvents": {
+                "type": "number"
+              },
+              "Payments": {
+                "type": "number"
+              },
+              "Message": {
+                "type": "number"
+              },
+              "Device": {
+                "type": "number"
+              },
+              "ShadowITApp": {
+                "type": "number"
+              },
+              "DeviceAuthRules": {
+                "type": "number"
+              }
+            }
           }
         },
-        "type": "object"
+        "type": "object",
+        "example": {
+          "id": 1,
+          "name": "Acme Corp",
+          "maxUser": 100,
+          "maxApp": 50,
+          "maxDomain": 10,
+          "maxFolder": 20,
+          "createdAt": "2023-01-15T10:00:00Z",
+          "updatedAt": "2024-06-01T12:00:00Z",
+          "admin": true,
+          "allowCreation": true,
+          "createOnly": false,
+          "licenseExpiration": "2025-01-15T10:00:00Z",
+          "stripeCustomerId": "cus_ABC123XYZ",
+          "language": "en",
+          "license": "PRO",
+          "visibility": "PRIVATE",
+          "rateLimit": {
+            "id": 1,
+            "organizationId": 1,
+            "limit": 1000,
+            "window": 3600,
+            "createdAt": "2023-01-15T10:00:00Z",
+            "updatedAt": "2024-06-01T12:00:00Z"
+          },
+          "_count": {
+            "Memberships": 25,
+            "Apps": 15,
+            "Folders": 8,
+            "Domains": 5,
+            "LogEvents": 1500,
+            "Payments": 10,
+            "Message": 50,
+            "Device": 30,
+            "ShadowITApp": 12,
+            "DeviceAuthRules": 7
+          }
+        }
+      },
+      "JsonValue": {
+        "description": "Matches any valid JSON value"
       }
     }
   },
@@ -245,9 +453,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "App"
-        ],
+        "tags": ["App"],
         "responses": {
           "200": {
             "description": "Successfully retrieved app.",
@@ -284,9 +490,7 @@
             "description": "The client ID of the app"
           }
         ],
-        "tags": [
-          "App"
-        ],
+        "tags": ["App"],
         "requestBody": {
           "required": true,
           "content": {
@@ -351,9 +555,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "App"
-        ],
+        "tags": ["App"],
         "responses": {
           "200": {
             "description": "Successfully deleted app.",
@@ -381,9 +583,7 @@
       "post": {
         "summary": "Create a new app",
         "description": "Create a new app for your organization",
-        "tags": [
-          "App"
-        ],
+        "tags": ["App"],
         "requestBody": {
           "required": true,
           "content": {
@@ -417,9 +617,7 @@
                     "example": "This is my app"
                   }
                 },
-                "required": [
-                  "title"
-                ]
+                "required": ["title"]
               }
             }
           }
@@ -446,20 +644,89 @@
     },
     "/apps": {
       "get": {
-        "summary": "Get all apps",
-        "description": "Get all apps of your organization",
-        "tags": [
-          "Apps"
+        "summary": "Get all apps with pagination",
+        "description": "Get all apps of your organization with pagination, search and filtering",
+        "tags": ["Apps"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search text (searches in title, url, slug)"
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "enum": ["title", "type", "provisioning"]
+            },
+            "description": "Field to sort by"
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            },
+            "description": "Sort order"
+          },
+          {
+            "in": "query",
+            "name": "typeFilter",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of app types to filter"
+          },
+          {
+            "in": "query",
+            "name": "provisioningFilter",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of provisioning types (none, scim)"
+          }
         ],
         "responses": {
           "200": {
-            "description": "An array of apps",
+            "description": "Paginated list of apps",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/App"
+                  "type": "object",
+                  "properties": {
+                    "apps": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/App"
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "Total number of apps"
+                    }
                   }
                 }
               }
@@ -476,9 +743,7 @@
       "post": {
         "summary": "Create multiple apps",
         "description": "Create multiple apps for your organization",
-        "tags": [
-          "Apps"
-        ],
+        "tags": ["Apps"],
         "requestBody": {
           "required": true,
           "content": {
@@ -526,7 +791,7 @@
         },
         "responses": {
           "200": {
-            "description": "An array of created apps",
+            "description": "List of created apps",
             "content": {
               "application/json": {
                 "schema": {
@@ -550,11 +815,30 @@
     "/events": {
       "get": {
         "summary": "Get log events",
-        "description": "Retrieve log events with various filters",
-        "tags": [
-          "Events"
-        ],
+        "description": "Retrieve paginated log events with various filters and sorting options",
+        "tags": ["Events"],
         "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "maximum": 50,
+              "minimum": 1
+            },
+            "description": "Number of events per page (maximum 50)"
+          },
           {
             "in": "query",
             "name": "fromDate",
@@ -562,7 +846,7 @@
               "type": "integer",
               "format": "int64"
             },
-            "description": "Start date for filtering events (timestamp)"
+            "description": "Start date for filtering events (timestamp in seconds)"
           },
           {
             "in": "query",
@@ -571,7 +855,7 @@
               "type": "integer",
               "format": "int64"
             },
-            "description": "End date for filtering events (timestamp)"
+            "description": "End date for filtering events (timestamp in seconds)"
           },
           {
             "in": "query",
@@ -599,14 +883,6 @@
           },
           {
             "in": "query",
-            "name": "userId",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Filter by user ID"
-          },
-          {
-            "in": "query",
             "name": "deviceId",
             "schema": {
               "type": "integer"
@@ -620,17 +896,54 @@
               "type": "string"
             },
             "description": "Filter by app client ID"
+          },
+          {
+            "in": "query",
+            "name": "shadowAppId",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by shadow app ID"
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "enum": ["date", "message", "membership", "type"],
+              "default": "date"
+            },
+            "description": "Field to sort by"
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "desc"
+            },
+            "description": "Sort order (ascending or descending)"
           }
         ],
         "responses": {
           "200": {
-            "description": "Array of log events",
+            "description": "Paginated log events",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LogEvent"
+                  "type": "object",
+                  "properties": {
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LogEvent"
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "Total number of events matching the filters"
+                    }
                   }
                 }
               }
@@ -638,6 +951,242 @@
           },
           "401": {
             "description": "Not authorized."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/folder/{id}/apps": {
+      "get": {
+        "summary": "Get folder apps with pagination",
+        "description": "Get all apps in a specific folder with pagination, search and filtering",
+        "tags": ["Folder"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Folder ID"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search text (searches in title, url, slug)"
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "enum": ["title", "type", "provisioning"]
+            },
+            "description": "Field to sort by"
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            },
+            "description": "Sort order"
+          },
+          {
+            "in": "query",
+            "name": "typeFilter",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of app types to filter"
+          },
+          {
+            "in": "query",
+            "name": "provisioningFilter",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of provisioning types (none, scim)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of folder apps",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "apps": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/App"
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "Total number of apps"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid folder ID."
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "404": {
+            "description": "Folder not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/folder/{id}/memberships": {
+      "get": {
+        "summary": "Get folder memberships with pagination",
+        "description": "Get all memberships that have access to a specific folder with pagination, search and filtering",
+        "tags": ["Folder"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Folder ID"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search text (searches in firstName, name, email)"
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "enum": ["firstName", "name", "email", "role", "status"]
+            },
+            "description": "Field to sort by"
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            },
+            "description": "Sort order"
+          },
+          {
+            "in": "query",
+            "name": "roleFilter",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of roles to filter"
+          },
+          {
+            "in": "query",
+            "name": "statusFilter",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of statuses to filter"
+          },
+          {
+            "in": "query",
+            "name": "stateFilter",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of states (registered, unregistered)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of folder memberships",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "memberships": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Membership"
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "Total number of memberships"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid folder ID."
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "404": {
+            "description": "Folder not found."
           },
           "500": {
             "description": "Internal server error."
@@ -656,9 +1205,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "Folder"
-        ],
+        "tags": ["Folder"],
         "responses": {
           "200": {
             "description": "Successfully retrieved folder.",
@@ -695,9 +1242,7 @@
             "description": "The ID of the folder to delete"
           }
         ],
-        "tags": [
-          "Folder"
-        ],
+        "tags": ["Folder"],
         "responses": {
           "200": {
             "description": "Folder successfully deleted",
@@ -725,9 +1270,7 @@
       "post": {
         "summary": "Create a new folder",
         "description": "Create a new folder within your organization",
-        "tags": [
-          "Folder"
-        ],
+        "tags": ["Folder"],
         "requestBody": {
           "required": true,
           "content": {
@@ -771,9 +1314,7 @@
       "get": {
         "summary": "Get all folders",
         "description": "Get all folders of your organization",
-        "tags": [
-          "Folders"
-        ],
+        "tags": ["Folders"],
         "responses": {
           "200": {
             "description": "An array of folders",
@@ -797,6 +1338,185 @@
         }
       }
     },
+    "/import/apps": {
+      "post": {
+        "summary": "Import multiple apps",
+        "description": "Import multiple apps with folders, users assignment and configuration",
+        "tags": ["Import"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "apps": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "description": "The title of the app",
+                          "example": "My App"
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "The URL of the app",
+                          "example": "https://example.com"
+                        },
+                        "iconUrl": {
+                          "type": "string",
+                          "description": "The icon URL of the app",
+                          "example": "https://example.com/icon.png"
+                        },
+                        "slug": {
+                          "type": "string",
+                          "description": "Optional slug for the app",
+                          "example": "my-app"
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "The description of the app",
+                          "example": "This is my app"
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "The type of the app",
+                          "enum": ["SMARTLINK", "OIDC", "SAML"],
+                          "example": "SMARTLINK"
+                        },
+                        "folders": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Folder paths for the app",
+                          "example": ["/Marketing/Social", "/Sales"]
+                        },
+                        "loginUrl": {
+                          "type": "string",
+                          "description": "Custom login URL for the app",
+                          "example": "https://example.com/login"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Import successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "description": "Number of apps imported"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/import/memberships": {
+      "post": {
+        "summary": "Import multiple memberships",
+        "description": "Import multiple users/memberships with folders assignment and registration",
+        "tags": ["Import"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "users": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Last name of the user",
+                          "example": "Doe"
+                        },
+                        "firstName": {
+                          "type": "string",
+                          "description": "First name of the user",
+                          "example": "John"
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "Email address of the user",
+                          "example": "john.doe@example.com"
+                        },
+                        "phone": {
+                          "type": "string",
+                          "description": "Phone number of the user",
+                          "example": "+33612345678"
+                        },
+                        "admin": {
+                          "type": "boolean",
+                          "description": "Whether the user should have admin role",
+                          "example": false
+                        },
+                        "folders": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Folder paths for the user",
+                          "example": ["/Marketing/Social", "/Sales"]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Import successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "description": "Number of memberships imported"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
     "/membership/{id}/deactivate": {
       "post": {
         "summary": "Deactivate a membership by ID",
@@ -812,9 +1532,7 @@
             "description": "The ID of the membership to deactivate"
           }
         ],
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "responses": {
           "200": {
             "description": "Successfully deactivated membership.",
@@ -838,6 +1556,75 @@
         }
       }
     },
+    "/membership/{id}/register": {
+      "post": {
+        "summary": "Generate registration link for a membership",
+        "description": "Generate a registration link for an existing membership and optionally send an invitation email",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The membership ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sendMail": {
+                    "type": "boolean",
+                    "description": "Send an invitation email to the user",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registration link generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "registerLink": {
+                      "type": "string",
+                      "description": "The registration link for the user"
+                    },
+                    "mailSent": {
+                      "type": "boolean",
+                      "description": "Whether an email was sent"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid membership ID"
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Membership not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/membership/{id}": {
       "get": {
         "summary": "Get a membership by ID",
@@ -849,9 +1636,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "responses": {
           "200": {
             "description": "Successfully retrieved membership.",
@@ -884,9 +1669,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "requestBody": {
           "required": true,
           "content": {
@@ -963,9 +1746,7 @@
             "description": "The ID of the membership to delete"
           }
         ],
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "responses": {
           "200": {
             "description": "Membership successfully deleted",
@@ -993,9 +1774,7 @@
       "post": {
         "summary": "Create a new membership",
         "description": "Create a new membership for your organization",
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "requestBody": {
           "required": true,
           "content": {
@@ -1014,21 +1793,6 @@
                   },
                   "email": {
                     "type": "string"
-                  },
-                  "sendMail": {
-                    "type": "boolean",
-                    "description": "Send an email to invite the user to register"
-                  },
-                  "sender": {
-                    "type": "object",
-                    "properties": {
-                      "firstName": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
                   },
                   "isAdmin": {
                     "type": "boolean",
@@ -1064,9 +1828,7 @@
       "get": {
         "summary": "Get all memberships",
         "description": "Get all memberships of your organization",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "responses": {
           "200": {
             "description": "An array of memberships",
@@ -1092,9 +1854,7 @@
       "post": {
         "summary": "Create multiple memberships",
         "description": "Create multiple memberships for your organization",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "requestBody": {
           "required": true,
           "content": {
@@ -1118,21 +1878,6 @@
                         },
                         "email": {
                           "type": "string"
-                        },
-                        "sendMail": {
-                          "type": "boolean",
-                          "description": "Send an email to invite the user to register"
-                        },
-                        "sender": {
-                          "type": "object",
-                          "properties": {
-                            "firstName": {
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string"
-                            }
-                          }
                         },
                         "isAdmin": {
                           "type": "boolean",
@@ -1174,9 +1919,7 @@
       "get": {
         "summary": "Search memberships",
         "description": "Search memberships with various filters",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "parameters": [
           {
             "in": "query",
@@ -1216,11 +1959,7 @@
             "name": "statusFilter",
             "schema": {
               "type": "string",
-              "enum": [
-                "all",
-                "registered",
-                "unregistered"
-              ]
+              "enum": ["all", "registered", "unregistered"]
             },
             "description": "Filter by registration status"
           }
@@ -1253,6 +1992,36 @@
           },
           "500": {
             "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/organization": {
+      "get": {
+        "summary": "Get organization information",
+        "description": "Retrieve public information about the organization associated with the workflow API key",
+        "tags": ["Organization"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized - Invalid or missing API key"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }

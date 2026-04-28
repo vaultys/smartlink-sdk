@@ -8,11 +8,11 @@ export type App = {
     ping?: number;
     slug?: string;
     title?: string;
-    type?: 'CUSTOM_SSO' | 'OPENID' | 'SAML' | 'SMARTLINK';
+    type?: 'OPENID' | 'SAML' | 'SMARTLINK';
     url?: string;
 };
 
-export type type = 'CUSTOM_SSO' | 'OPENID' | 'SAML' | 'SMARTLINK';
+export type type = 'OPENID' | 'SAML' | 'SMARTLINK';
 
 export type Folder = {
     forAllUsers?: boolean;
@@ -23,33 +23,30 @@ export type Folder = {
     path?: string;
 };
 
+/**
+ * Matches any valid JSON value
+ */
+export type JsonValue = unknown;
+
 export type LogEvent = {
     appClientId?: string;
     createdAt?: string;
+    /**
+     * From https://github.com/sindresorhus/type-fest/
+     * Matches any valid JSON value.
+     */
+    data?: JsonValue;
     deviceId?: number;
     folderId?: number;
     id?: number;
     membershipId?: number;
     message?: string;
     organizationId?: number;
+    shadowItAppId?: number;
     type?: number;
-    userId?: number;
 };
 
 export type Membership = {
-    Certificates?: Array<{
-        connection?: string;
-        data?: string;
-        id?: number;
-        key?: string;
-        membershipId?: number;
-        metadata?: string;
-        organizationId?: number;
-        register?: boolean;
-        registration?: string;
-        started?: string;
-        status?: number;
-    }>;
     createdAt?: string;
     email?: string;
     firstName?: string;
@@ -62,12 +59,67 @@ export type Membership = {
     role?: 'ADMIN' | 'OWNER' | 'USER';
     status?: 'ACTIVE' | 'INACTIVE';
     updatedAt?: string;
-    userId?: number;
 };
 
 export type role = 'ADMIN' | 'OWNER' | 'USER';
 
 export type status = 'ACTIVE' | 'INACTIVE';
+
+export type Message = {
+    createdAt?: string;
+    creatorId?: number;
+    description?: string;
+    expiration?: string;
+    id?: number;
+    organizationId?: number;
+    recipientId?: number;
+    status?: string;
+    title?: string;
+    type?: string;
+};
+
+export type Organization = {
+    id?: number;
+    name?: string;
+    maxUser?: number;
+    maxApp?: number;
+    maxDomain?: number;
+    maxFolder?: number;
+    createdAt?: string;
+    updatedAt?: string;
+    admin?: boolean;
+    allowCreation?: boolean;
+    createOnly?: boolean;
+    licenseExpiration?: string;
+    stripeCustomerId?: string;
+    language?: string;
+    license?: 'FREE' | 'PRO' | 'ENTERPRISE';
+    visibility?: 'PUBLIC' | 'PRIVATE';
+    rateLimit?: {
+        id?: number;
+        organizationId?: number;
+        limit?: number;
+        window?: number;
+        createdAt?: string;
+        updatedAt?: string;
+    };
+    _count?: {
+        Memberships?: number;
+        Apps?: number;
+        Folders?: number;
+        Domains?: number;
+        LogEvents?: number;
+        Payments?: number;
+        Message?: number;
+        Device?: number;
+        ShadowITApp?: number;
+        DeviceAuthRules?: number;
+    };
+};
+
+export type license = 'FREE' | 'PRO' | 'ENTERPRISE';
+
+export type visibility = 'PUBLIC' | 'PRIVATE';
 
 export type GetAppByClientIdData = {
     path: {
@@ -138,7 +190,46 @@ export type PostAppResponse = (App);
 
 export type PostAppError = (unknown);
 
-export type GetAppsResponse = (Array<App>);
+export type GetAppsData = {
+    query?: {
+        /**
+         * Page number
+         */
+        page?: number;
+        /**
+         * Number of items per page
+         */
+        pageSize?: number;
+        /**
+         * Comma-separated list of provisioning types (none, scim)
+         */
+        provisioningFilter?: string;
+        /**
+         * Search text (searches in title, url, slug)
+         */
+        search?: string;
+        /**
+         * Field to sort by
+         */
+        sortBy?: 'title' | 'type' | 'provisioning';
+        /**
+         * Sort order
+         */
+        sortOrder?: 'asc' | 'desc';
+        /**
+         * Comma-separated list of app types to filter
+         */
+        typeFilter?: string;
+    };
+};
+
+export type GetAppsResponse = ({
+    apps?: Array<App>;
+    /**
+     * Total number of apps
+     */
+    total?: number;
+});
 
 export type GetAppsError = (unknown);
 
@@ -188,7 +279,7 @@ export type GetEventsData = {
          */
         folderId?: number;
         /**
-         * Start date for filtering events (timestamp)
+         * Start date for filtering events (timestamp in seconds)
          */
         fromDate?: number;
         /**
@@ -196,23 +287,147 @@ export type GetEventsData = {
          */
         membershipId?: number;
         /**
-         * End date for filtering events (timestamp)
+         * Page number for pagination
+         */
+        page?: number;
+        /**
+         * Number of events per page (maximum 50)
+         */
+        pageSize?: number;
+        /**
+         * Filter by shadow app ID
+         */
+        shadowAppId?: number;
+        /**
+         * Field to sort by
+         */
+        sortBy?: 'date' | 'message' | 'membership' | 'type';
+        /**
+         * Sort order (ascending or descending)
+         */
+        sortOrder?: 'asc' | 'desc';
+        /**
+         * End date for filtering events (timestamp in seconds)
          */
         toDate?: number;
         /**
          * Type of log event (APP_OPEN = 0, SMARTLINK_CONNECT = 1, SMARTLINK_CONNECT_FAIL = 2, SMARTLINK_CONNECT_DENIED = 3, SMARTLINK_EXTENSION_CONNECT = 4, SMARTLINK_EXTENSION_CONNECT_FAIL = 5, SMARTLINK_EXTENSION_CONNECT_DENIED = 6, POST_PASSWORD = 7, FORM_BLOCKED = 8)
          */
         type?: number;
-        /**
-         * Filter by user ID
-         */
-        userId?: number;
     };
 };
 
-export type GetEventsResponse = (Array<LogEvent>);
+export type GetEventsResponse = ({
+    events?: Array<LogEvent>;
+    /**
+     * Total number of events matching the filters
+     */
+    total?: number;
+});
 
 export type GetEventsError = (unknown);
+
+export type GetFolderByIdAppsData = {
+    path: {
+        /**
+         * Folder ID
+         */
+        id: number;
+    };
+    query?: {
+        /**
+         * Page number
+         */
+        page?: number;
+        /**
+         * Number of items per page
+         */
+        pageSize?: number;
+        /**
+         * Comma-separated list of provisioning types (none, scim)
+         */
+        provisioningFilter?: string;
+        /**
+         * Search text (searches in title, url, slug)
+         */
+        search?: string;
+        /**
+         * Field to sort by
+         */
+        sortBy?: 'title' | 'type' | 'provisioning';
+        /**
+         * Sort order
+         */
+        sortOrder?: 'asc' | 'desc';
+        /**
+         * Comma-separated list of app types to filter
+         */
+        typeFilter?: string;
+    };
+};
+
+export type GetFolderByIdAppsResponse = ({
+    apps?: Array<App>;
+    /**
+     * Total number of apps
+     */
+    total?: number;
+});
+
+export type GetFolderByIdAppsError = (unknown);
+
+export type GetFolderByIdMembershipsData = {
+    path: {
+        /**
+         * Folder ID
+         */
+        id: number;
+    };
+    query?: {
+        /**
+         * Page number
+         */
+        page?: number;
+        /**
+         * Number of items per page
+         */
+        pageSize?: number;
+        /**
+         * Comma-separated list of roles to filter
+         */
+        roleFilter?: string;
+        /**
+         * Search text (searches in firstName, name, email)
+         */
+        search?: string;
+        /**
+         * Field to sort by
+         */
+        sortBy?: 'firstName' | 'name' | 'email' | 'role' | 'status';
+        /**
+         * Sort order
+         */
+        sortOrder?: 'asc' | 'desc';
+        /**
+         * Comma-separated list of states (registered, unregistered)
+         */
+        stateFilter?: string;
+        /**
+         * Comma-separated list of statuses to filter
+         */
+        statusFilter?: string;
+    };
+};
+
+export type GetFolderByIdMembershipsResponse = ({
+    memberships?: Array<Membership>;
+    /**
+     * Total number of memberships
+     */
+    total?: number;
+});
+
+export type GetFolderByIdMembershipsError = (unknown);
 
 export type GetFolderByIdData = {
     path: {
@@ -255,6 +470,94 @@ export type GetFoldersResponse = (Array<Folder>);
 
 export type GetFoldersError = (unknown);
 
+export type PostImportAppsData = {
+    body: {
+        apps?: Array<{
+            /**
+             * The title of the app
+             */
+            title?: string;
+            /**
+             * The URL of the app
+             */
+            url?: string;
+            /**
+             * The icon URL of the app
+             */
+            iconUrl?: string;
+            /**
+             * Optional slug for the app
+             */
+            slug?: string;
+            /**
+             * The description of the app
+             */
+            description?: string;
+            /**
+             * The type of the app
+             */
+            type?: 'SMARTLINK' | 'OIDC' | 'SAML';
+            /**
+             * Folder paths for the app
+             */
+            folders?: Array<(string)>;
+            /**
+             * Custom login URL for the app
+             */
+            loginUrl?: string;
+        }>;
+    };
+};
+
+export type PostImportAppsResponse = ({
+    /**
+     * Number of apps imported
+     */
+    count?: number;
+});
+
+export type PostImportAppsError = (unknown);
+
+export type PostImportMembershipsData = {
+    body: {
+        users?: Array<{
+            /**
+             * Last name of the user
+             */
+            name?: string;
+            /**
+             * First name of the user
+             */
+            firstName?: string;
+            /**
+             * Email address of the user
+             */
+            email?: string;
+            /**
+             * Phone number of the user
+             */
+            phone?: string;
+            /**
+             * Whether the user should have admin role
+             */
+            admin?: boolean;
+            /**
+             * Folder paths for the user
+             */
+            folders?: Array<(string)>;
+        }>;
+    };
+};
+
+export type PostImportMembershipsResponse = ({
+    /**
+     * Number of memberships imported
+     */
+    count?: number;
+});
+
+export type PostImportMembershipsError = (unknown);
+
 export type PostMembershipByIdDeactivateData = {
     path: {
         /**
@@ -267,6 +570,34 @@ export type PostMembershipByIdDeactivateData = {
 export type PostMembershipByIdDeactivateResponse = (Membership);
 
 export type PostMembershipByIdDeactivateError = (unknown);
+
+export type PostMembershipByIdRegisterData = {
+    body: {
+        /**
+         * Send an invitation email to the user
+         */
+        sendMail?: boolean;
+    };
+    path: {
+        /**
+         * The membership ID
+         */
+        id: number;
+    };
+};
+
+export type PostMembershipByIdRegisterResponse = ({
+    /**
+     * The registration link for the user
+     */
+    registerLink?: string;
+    /**
+     * Whether an email was sent
+     */
+    mailSent?: boolean;
+});
+
+export type PostMembershipByIdRegisterError = (unknown);
 
 export type GetMembershipByIdData = {
     path: {
@@ -317,14 +648,6 @@ export type PostMembershipData = {
         phone?: string;
         email?: string;
         /**
-         * Send an email to invite the user to register
-         */
-        sendMail?: boolean;
-        sender?: {
-            firstName?: string;
-            name?: string;
-        };
-        /**
          * Set the membership as admin
          */
         isAdmin?: boolean;
@@ -346,14 +669,6 @@ export type PostMembershipsData = {
             firstName?: string;
             phone?: string;
             email?: string;
-            /**
-             * Send an email to invite the user to register
-             */
-            sendMail?: boolean;
-            sender?: {
-                firstName?: string;
-                name?: string;
-            };
             /**
              * Set the membership as admin
              */
@@ -400,3 +715,7 @@ export type GetMembershipsSearchResponse = ({
 });
 
 export type GetMembershipsSearchError = (unknown);
+
+export type GetOrganizationResponse = (Organization);
+
+export type GetOrganizationError = (unknown);
