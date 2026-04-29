@@ -6,6 +6,7 @@
 - [Examples](#examples)
   - [Example 1: Init client locally](#example-1-init-client-locally)
   - [Example 2: Configure client globally](#example-2-configure-client-globally)
+- [Testing](#testing)
 - [SDK Functions](#sdk-functions)
   - [getAppByClientId](#getappbyclientid)
   - [postApp](#postapp)
@@ -15,10 +16,15 @@
   - [postApps](#postapps)
   - [getEvents](#getevents)
   - [getFolderById](#getfolderbyid)
+  - [getFolderByIdApps](#getfolderbyidapps)
+  - [getFolderByIdMemberships](#getfolderbyidmemberships)
   - [deleteFolderById](#deletefolderbyid)
   - [postFolder](#postfolder)
   - [getFolders](#getfolders)
+  - [postImportApps](#postimportapps)
+  - [postImportMemberships](#postimportmemberships)
   - [postMembershipByIdDeactivate](#postmembershipbyiddeactivate)
+  - [postMembershipByIdRegister](#postmembershipbyidregister)
   - [getMembershipById](#getmembershipbyid)
   - [putMembershipById](#putmembershipbyid)
   - [deleteMembershipById](#deletemembershipbyid)
@@ -26,10 +32,12 @@
   - [getMemberships](#getmemberships)
   - [postMemberships](#postmemberships)
   - [getMembershipsSearch](#getmembershipssearch)
+  - [getOrganization](#getorganization)
 - [Schemas](#schemas)
   - [User](#user)
   - [Folder](#folder)
   - [App](#app)
+  - [Organization](#organization)
 - [Webhooks](#webhooks)
   - [Verify](#verify)
   - [Webhooks types](#webhook-types)
@@ -78,6 +86,23 @@ const fetch = async () => {
 };
 
 fetch();
+```
+
+## Testing
+
+The SDK ships with end-to-end Jest tests that expect a local SmartLink API.
+
+Create `ts/.env` with:
+
+```bash
+API_BASE_URL=http://localhost:3003/api/workflow
+API_KEY=<your api key>
+```
+
+Then run:
+
+```bash
+npm run test
 ```
 
 ## SDK Functions
@@ -432,6 +457,157 @@ const folders = await getFolders();
 
 > 500: { error: "Internal server error" }
 
+### postImportApps
+
+Import multiple apps with folders, users assignment and configuration.
+
+```typescript
+await postImportApps({
+  body: {
+    apps: [
+      {
+        title: "Imported app",
+        url: "https://app.example.com",
+        type: "SMARTLINK",
+        folders: ["/Sales/"],
+      },
+    ],
+  },
+});
+```
+
+#### Body
+
+| Parameters | type  | required | default |
+| ---------- | ----- | -------- | ------- |
+| apps       | array | false    | null    |
+
+#### Response
+
+> 200: { data: { count: number } }
+
+> 401: { error: "Not authorized" }
+
+> 500: { error: "Internal server error" }
+
+### postImportMemberships
+
+Import multiple users/memberships with folders assignment and registration.
+
+```typescript
+await postImportMemberships({
+  body: {
+    users: [
+      {
+        firstName: "John",
+        name: "Doe",
+        email: "john.doe@example.com",
+        folders: ["/Sales/"],
+      },
+    ],
+  },
+});
+```
+
+#### Body
+
+| Parameters | type  | required | default |
+| ---------- | ----- | -------- | ------- |
+| users      | array | false    | null    |
+
+#### Response
+
+> 200: { data: { count: number } }
+
+> 401: { error: "Not authorized" }
+
+> 500: { error: "Internal server error" }
+
+### getFolderByIdApps
+
+Get all apps in a specific folder with pagination, search and filtering.
+
+```typescript
+const apps = await getFolderByIdApps({
+  path: {
+    id: 1,
+  },
+  query: {
+    page: 1,
+    pageSize: 10,
+  },
+});
+```
+
+#### Parameters
+
+| Parameters | type    | required | default |
+| ---------- | ------- | -------- | ------- |
+| id         | integer | true     |         |
+
+#### Query
+
+| Parameters         | type    | required | default |
+| ------------------ | ------- | -------- | ------- |
+| page               | integer | false    | null    |
+| pageSize           | integer | false    | null    |
+| provisioningFilter  | string  | false    | null    |
+| search             | string  | false    | null    |
+| sortBy             | string  | false    | null    |
+| sortOrder          | string  | false    | null    |
+| typeFilter         | string  | false    | null    |
+
+#### Response
+
+> 200: { data: { apps: Array of [App](#app); total: number } }
+
+> 401: { error: "Not authorized" }
+
+> 500: { error: "Internal server error" }
+
+### getFolderByIdMemberships
+
+Get all memberships that have access to a specific folder with pagination, search and filtering.
+
+```typescript
+const memberships = await getFolderByIdMemberships({
+  path: {
+    id: 1,
+  },
+  query: {
+    page: 1,
+    pageSize: 10,
+  },
+});
+```
+
+#### Parameters
+
+| Parameters | type    | required | default |
+| ---------- | ------- | -------- | ------- |
+| id         | integer | true     |         |
+
+#### Query
+
+| Parameters  | type    | required | default |
+| ----------- | ------- | -------- | ------- |
+| page        | integer | false    | null    |
+| pageSize    | integer | false    | null    |
+| roleFilter   | string | false    | null    |
+| search      | string  | false    | null    |
+| sortBy      | string  | false    | null    |
+| sortOrder   | string  | false    | null    |
+| stateFilter | string  | false    | null    |
+| statusFilter | string | false    | null    |
+
+#### Response
+
+> 200: { data: { memberships: Array of [User](#user); total: number } }
+
+> 401: { error: "Not authorized" }
+
+> 500: { error: "Internal server error" }
+
 ### postMembershipByIdDeactivate
 
 Updates a membership's status to "INACTIVE" by its ID.
@@ -453,6 +629,43 @@ await postMembershipByIdDeactivate({
 #### Response
 
 > 200: { data: The updated [User](#user) }
+
+> 401: { error: "Not authorized" }
+
+> 404: { error: "User not found" }
+
+> 500: { error: "Internal server error" }
+
+### postMembershipByIdRegister
+
+Generate a registration link for an existing membership and optionally send an invitation email.
+
+```typescript
+await postMembershipByIdRegister({
+  path: {
+    id: 1,
+  },
+  body: {
+    sendMail: true,
+  },
+});
+```
+
+#### Parameters
+
+| Parameters | type    | required | default |
+| ---------- | ------- | -------- | ------- |
+| id         | integer | true     |         |
+
+#### Body
+
+| Parameters | type    | required | default |
+| ---------- | ------- | -------- | ------- |
+| sendMail   | boolean | false    | false   |
+
+#### Response
+
+> 200: { data: { registerLink: string; mailSent: boolean } }
 
 > 401: { error: "Not authorized" }
 
@@ -711,6 +924,22 @@ const memberships = await getMembershipsSearch({
 
 > 500: { error: "Internal server error" }
 
+### getOrganization
+
+Retrieve public information about the organization associated with the workflow API key.
+
+```typescript
+const organization = await getOrganization();
+```
+
+#### Response
+
+> 200: { data: [Organization](#organization) }
+
+> 401: { error: "Not authorized" }
+
+> 500: { error: "Internal server error" }
+
 ## Schemas
 
 ### User
@@ -754,6 +983,27 @@ const memberships = await getMembershipsSearch({
 | slug           | string  | Unique slug for the app           |
 | description    | string  | App description                   |
 | organizationId | integer | Unique ID of the organization     |
+
+### Organization
+
+| Field            | type    | description                              |
+| ---------------- | ------- | ---------------------------------------- |
+| id               | integer | Organization unique ID                   |
+| name             | string  | Organization name                        |
+| maxUser          | integer | Maximum number of users                  |
+| maxApp           | integer | Maximum number of apps                   |
+| maxDomain        | integer | Maximum number of domains                |
+| maxFolder        | integer | Maximum number of folders                |
+| createdAt        | Date    | Creation date                            |
+| updatedAt        | Date    | Last update date                         |
+| admin            | boolean | Organization is admin managed            |
+| allowCreation    | boolean | Allow creation                           |
+| createOnly       | boolean | Create only                              |
+| licenseExpiration | Date   | License expiration date                  |
+| stripeCustomerId | string  | Stripe customer ID                       |
+| language         | string  | Default language                         |
+| license          | string  | License type (FREE, PRO, ENTERPRISE)     |
+| visibility       | string  | Visibility (PUBLIC, PRIVATE)             |
 
 ### Event
 

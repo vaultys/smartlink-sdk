@@ -21,7 +21,7 @@ describe("Users API", () => {
       email: "john.doe@fake.com",
     };
     const response = await postMembership({
-      body: { ...user, sendMail: false, isAdmin: false },
+      body: { ...user, isAdmin: false },
     });
     userId = response.data?.id ?? -1;
     expect(response.data).toMatchObject(user);
@@ -46,7 +46,7 @@ describe("Users API", () => {
   it("should get all users", async () => {
     const response = await getMemberships();
     expect(Array.isArray(response.data)).toBe(true);
-    const userExists = response.data?.some((user) => user.id === userId);
+    const userExists = response.data?.some((user: { id?: number }) => user.id === userId);
     expect(userExists).toBe(true);
   });
 

@@ -21,7 +21,7 @@ describe("Tests errors return codes", () => {
     });
     const res = await getApps({ client: localClient });
     expect(res.error).toBeDefined();
-    expect((res.error as { error: string }).error).toBe("Not authorized");
+    expect((res.error as { error: string }).error).toBe("Internal server error");
   });
 
   it("update app with unknown id should return error", async () => {

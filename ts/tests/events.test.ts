@@ -13,6 +13,7 @@ client.setConfig({
 describe("Events API", () => {
   it("should get all events", async () => {
     const response = await getEvents();
-    expect(Array.isArray(response.data)).toBe(true);
+    expect(Array.isArray(response.data?.events)).toBe(true);
+    expect(typeof response.data?.total).toBe("number");
   });
 });

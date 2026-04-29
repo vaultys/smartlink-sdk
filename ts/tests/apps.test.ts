@@ -30,7 +30,8 @@ describe("Applications API", () => {
 
   it("should get all apps", async () => {
     const response = await getApps();
-    expect(Array.isArray(response.data)).toBe(true);
+    expect(Array.isArray(response.data?.apps)).toBe(true);
+    expect(typeof response.data?.total).toBe("number");
   });
 
   it("should get an app by client ID", async () => {
