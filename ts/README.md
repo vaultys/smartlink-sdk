@@ -262,24 +262,28 @@ const apps = await getApps();
 
 Creates multiple apps for your organization.
 
+Note: this endpoint is defined by the SDK contract, but the current backend returns an `Internal server error` in this environment. For now, prefer calling `postApp` multiple times when you need to create several apps.
+
 ```typescript
 await postApps({
-  body: [
-    {
-      title: "App title 1",
-      url: "https://app1.com",
-      iconUrl: "https://app1.com/icon.png",
-      description: "App description 1",
-      slug: "unique_slug_1",
-    },
-    {
-      title: "App title 2",
-      url: "https://app2.com",
-      iconUrl: "https://app2.com/icon.png",
-      description: "App description 2",
-      slug: "unique_slug_2",
-    },
-  ],
+  body: {
+    apps: [
+      {
+        title: "App title 1",
+        url: "https://app1.com",
+        iconUrl: "https://app1.com/icon.png",
+        description: "App description 1",
+        slug: "unique_slug_1",
+      },
+      {
+        title: "App title 2",
+        url: "https://app2.com",
+        iconUrl: "https://app2.com/icon.png",
+        description: "App description 2",
+        slug: "unique_slug_2",
+      },
+    ],
+  },
 });
 ```
 
