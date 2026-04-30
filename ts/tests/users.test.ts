@@ -1,5 +1,15 @@
 import { config } from "dotenv";
-import { client, getMemberships, postMembership, getMembershipById, deleteMembershipById, putMembershipById } from "../src/client";
+import {
+  client,
+  getMemberships,
+  postMembership,
+  getMembershipById,
+  deleteMembershipById,
+  putMembershipById,
+  getMembershipsSearch,
+  postMembershipByIdRegister,
+  postMembershipByIdDeactivate,
+} from "../src/client";
 
 config();
 
@@ -62,5 +72,76 @@ describe("Users API", () => {
       path: { id: userId },
     });
     expect(response.data?.id).toBe(userId);
+  });
+
+  it("should register and deactivate a user", async () => {
+    const runId = `${Date.now()}`;
+    const created = await postMembership({
+      body: {
+        firstName: `Register ${runId}`,
+        name: "User",
+        email: `register-${runId}@example.com`,
+        phone: "+33600000000",
+        isAdmin: false,
+      },
+    });
+
+    const membershipId = created.data?.id;
+    expect(membershipId).toBeDefined();
+
+    const registered = await postMembershipByIdRegister({
+      path: { id: membershipId as number },
+      body: {
+        sendMail: false,
+      },
+    });
+    expect(registered.data?.registerLink).toBeDefined();
+    expect(typeof registered.data?.mailSent).toBe("boolean");
+
+    const deactivated = await postMembershipByIdDeactivate({
+      path: { id: String(membershipId) },
+    });
+    expect(deactivated.data?.status).toBe("INACTIVE");
+
+    if (membershipId) {
+      await deleteMembershipById({
+        path: { id: membershipId },
+      });
+    }
+  });
+
+  it("should search memberships", async () => {
+    const runId = `${Date.now()}`;
+    const created = await postMembership({
+      body: {
+        firstName: `Search ${runId}`,
+        name: "User",
+        email: `search-${runId}@example.com`,
+        phone: "+33600000001",
+        isAdmin: false,
+      },
+    });
+
+    const membershipId = created.data?.id;
+    expect(membershipId).toBeDefined();
+
+    const response = await getMembershipsSearch({
+      query: {
+        page: 1,
+        search: `search-${runId}@example.com`,
+      },
+    });
+
+    expect(Array.isArray(response.data?.memberships)).toBe(true);
+    expect(response.data?.count).toBeGreaterThanOrEqual(1);
+    expect(
+      response.data?.memberships?.some((membership) => membership.email === `search-${runId}@example.com`),
+    ).toBe(true);
+
+    if (membershipId) {
+      await deleteMembershipById({
+        path: { id: membershipId },
+      });
+    }
   });
 });

@@ -486,6 +486,25 @@ await postImportApps({
 | ---------- | ----- | -------- | ------- |
 | apps       | array | false    | null    |
 
+#### Apps item
+
+Each item in `apps` can include:
+
+| Parameters | type     | required | default |
+| ---------- | -------- | -------- | ------- |
+| title      | string   | true     |         |
+| url        | string   | false    | null    |
+| iconUrl    | string   | false    | null    |
+| slug       | string   | false    | null    |
+| description | string   | false    | null    |
+| type       | string   | false    | SMARTLINK |
+| folders    | string[] | false    | null    |
+| loginUrl   | string   | false    | null    |
+
+Use full folder paths in `folders` such as `/Sales/` or `/Marketing/Social/`.
+
+`type` accepts `SMARTLINK`, `OIDC`, or `SAML`.
+
 #### Response
 
 > 200: { data: { count: number } }
@@ -518,6 +537,21 @@ await postImportMemberships({
 | Parameters | type  | required | default |
 | ---------- | ----- | -------- | ------- |
 | users      | array | false    | null    |
+
+#### Users item
+
+Each item in `users` can include:
+
+| Parameters | type      | required | default |
+| ---------- | --------- | -------- | ------- |
+| name       | string    | true     |         |
+| firstName  | string    | true     |         |
+| email      | string    | true     |         |
+| phone      | string    | false    | null    |
+| admin      | boolean   | false    | false   |
+| folders    | string[]  | false    | null    |
+
+Use full folder paths in `folders` such as `/Sales/` or `/Marketing/Social/`.
 
 #### Response
 
@@ -931,6 +965,8 @@ const memberships = await getMembershipsSearch({
 ### getOrganization
 
 Retrieve public information about the organization associated with the workflow API key.
+
+The response is the full [Organization](#organization) schema, including quotas, license information, visibility and rate limit metadata when available.
 
 ```typescript
 const organization = await getOrganization();

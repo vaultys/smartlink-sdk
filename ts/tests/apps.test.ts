@@ -64,4 +64,44 @@ describe("Applications API", () => {
     expect(response.data).toBeDefined();
     expect(response.data?.clientId).toBe(appId);
   });
+
+  it("should create multiple apps", async () => {
+    const runId = `${Date.now()}`;
+    const first = await postApp({
+      body: {
+        title: `Batch App A ${runId}`,
+        url: "https://batch-a.example.com",
+        iconUrl: "https://batch-a.example.com/icon.png",
+        description: "Batch App A",
+        slug: `batch-app-a-${runId}`,
+      },
+    });
+    const second = await postApp({
+      body: {
+        title: `Batch App B ${runId}`,
+        url: "https://batch-b.example.com",
+        iconUrl: "https://batch-b.example.com/icon.png",
+        description: "Batch App B",
+        slug: `batch-app-b-${runId}`,
+      },
+    });
+
+    expect(first.error).toBeUndefined();
+    expect(second.error).toBeUndefined();
+
+    const apps = await getApps();
+    const createdApps = (apps.data?.apps ?? []).filter((app) =>
+      [`Batch App A ${runId}`, `Batch App B ${runId}`].includes(app.title ?? ""),
+    );
+
+    expect(createdApps).toHaveLength(2);
+
+    for (const app of createdApps) {
+      if (app.clientId) {
+        await deleteAppByClientId({
+          path: { clientId: app.clientId },
+        });
+      }
+    }
+  });
 });
